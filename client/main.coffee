@@ -16,6 +16,34 @@ Template.players.rendered = ->
 # Template.players.scores = ->
 	# return 5
 
+# while counter < 500{
+# 	fakeGame();
+# 	counter +=1;
+# }
+
+# @fakeGame = () ->
+# 	ranks = [{name:"Travis", rank: "2"},{name:"Jasmin", rank: "3"},{name:"Maisam", rank: "4"},{name:"Steve", rank: "1"}]
+# 	numValues = 4
+# 	names = ["Travis","Jasmin","Maisam","Steve"]
+# 	places = [1,2,3,4]
+# 	gameTime = new Date().getTime()
+
+# 	gameResult = 
+# 		timestamp: gameTime
+# 		ranks: ranks
+
+# 	if numValues > 1 and numValues < 5
+# 		Session.set "newGameResult", gameResult
+
+# 		Games.insert(
+# 			date: gameTime
+# 			numPlayers: numValues
+# 			names: names
+# 			ranks: places
+# 		)
+# 		makePlot()
+
+
 Template.players.events = 
 	"click div.submitGame": (d) ->
 		srcE = if d.srcElement then d.srcElement else d.target

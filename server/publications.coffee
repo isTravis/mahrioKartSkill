@@ -5,6 +5,38 @@ Meteor.publish "playersPub", (result) ->
     # games = Games.find().fetch()
     # playersDB = Players.find().fetch()
 
+    # console.log "Beginning Side loop"
+    # alice = {}
+    # alice.skill = [31.337, 6.238]
+
+    # bob = {}
+    # bob.skill = [24.993, 5.434]
+
+    # chris = {}
+    # chris.skill = [18.664,   6.238]
+
+    # darren = {}
+    # darren.skill = [25.007,  5.434]
+
+    # alice.rank = "1"
+    # bob.rank = "2"
+    # chris.rank = "3"
+    # darren.rank = "4"
+
+    
+    # trueskill = Meteor.require("trueskill");
+
+    # for i in [1..100]
+    #     trueskill.AdjustPlayers([alice, bob, chris, darren]);
+
+    #     console.log "Game " + i
+    #     console.log("alice: " + alice.skill);
+    #     console.log("bob: " + bob.skill);
+    #     console.log("chris: " + chris.skill);
+    #     console.log("darren: " + darren.skill);
+
+    # console.log("End Side loop")
+
     if result
         trueskill = Meteor.require "trueskill"
         players = []
@@ -12,19 +44,21 @@ Meteor.publish "playersPub", (result) ->
         # console.log result
         for i in [0..result.ranks.length-1]
             # For each player in the game, get their rank, append
-            # name = result.ranks[i].name
+            name = result.ranks[i].name
+            thisTemp = Players.findOne({name:name})
             rank = result.ranks[i].rank
-            currentMu = 25
-            currentSigma = 8
+            currentMu = thisTemp.currentMu
+            currentSigma = thisTemp.currentSigma
 
             tempPlayer = {}
             tempPlayer.skill = [currentMu,currentSigma]
             tempPlayer.rank = rank
 
             players[i] = tempPlayer
+            
         # console.log players
-
         trueskill.AdjustPlayers players  
+        # console.log players
 
         # Update the entry
         for i in [0..result.ranks.length-1]
