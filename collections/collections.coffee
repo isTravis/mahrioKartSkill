@@ -1,7 +1,13 @@
-@Scores = new Meteor.Collection "scores"
+@Games = new Meteor.Collection "games"
+@Players = new Meteor.Collection "players"
 
 # Permissions
-@Scores.allow(
+@Games.allow(
+	insert: () ->
+		return true
+	)
+
+@Players.allow(
 	insert: () ->
 		return true
 	)
@@ -14,3 +20,4 @@
 # 	insert: () ->
 # 		return true
 # 	)
+

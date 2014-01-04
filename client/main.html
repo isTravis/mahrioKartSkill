@@ -3,9 +3,96 @@
 </head>
 
 <body>
-  {{>scores}}
+	<h1 class="main-title">Mahrio-Kart Skills</h1>
+	{{>players}}
+	{{>scores}}
+	{{>games}}
 </body>
 
+<template name="players">
+	<div class="submit-section">
+		<h1>Players</h1>
+		<div class="players">
+			{{#each players}}
+				<div class="player">
+					<h2>{{this.name}}</h2>
+					<input type="text" class="{{name}}">
+				</div>
+			{{/each}}
+		</div>
+		<div class="submitGame">SUBMIT GRANDPRIX</div>
+	</div>
+	
+	<div class="rank-section">
+		<h1>Rank</h1>
+			<div class="toggle-boxes">
+				{{#each players}}
+					<div class="toggleBox">{{name}}</div>
+				{{/each}}
+			</div>
+		<div class="demo-container">
+			<div id="placeholder" class="demo-placeholder"></div>
+		</div>
+	</div>
+	
+</template>
+
+
 <template name="scores">
-	Yo
+	<div class="scores-section">
+		<h1>Scores</h1>
+
+		<table cellpadding="0" cellspacing="0" border="0" class="scoreTable" id="scoreTable">
+			<thead>
+				<tr>
+					<th class="col1">Name</th>
+					<th class="col2"># Games</th>
+					<th class="col3">Current Mu</th>
+					<th class="col4">Current Sigma</th>
+					<th class="col5">Mu History</th>
+					<th class="col6">Sigma History</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{#each scores}}
+				<tr class="player-row">
+					<td>{{name}}</td>
+					<td>{{gamesPlayed}}</td>
+					<td class="two-decimal">{{currentMu}}</td>
+					<td class="two-decimal">{{currentSigma}}</td>
+					<td class="sparkline">{{muHistory}}</td>
+					<td class="sparkline">{{sigmaHistory}}</td>
+				</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</div>
+</template>
+
+
+<template name="games">
+	<div class="games-section">
+		<h1>Games</h1>
+		<table cellpadding="0" cellspacing="0" border="0" class="gameTable" id="gameTable">
+			<thead>
+				<tr>
+					<th class="col1">Date</th>
+					<th class="col2"># Players</th>
+					<th class="col3">Names</th>
+					<th class="col4">Ranks</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{#each games}}
+				<tr class="game-row">
+					<td>{{date}}</td>
+					<td>{{numPlayers}}</td>
+					<td>{{names}}</td>
+					<td>{{ranks}}</td>
+				</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</div>
+
 </template>
