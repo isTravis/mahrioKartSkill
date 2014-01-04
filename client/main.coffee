@@ -180,3 +180,50 @@ Template.games.games = ->
 		y = (1 / Math.sqrt(2*Math.PI*Math.pow(sigma,2))) * Math.exp(-1 * Math.pow((x-mu), 2) / (2 * Math.pow(sigma,2)));
 		pointArray.push [x,y]
 	return pointArray
+
+
+
+# @rerunHistory = () ->
+# 	Get all players
+# 	reset all their profiles
+# 	for all games in Games
+# 		'submit'
+
+# 		srcE = if d.srcElement then d.srcElement else d.target
+# 		console.log srcE
+# 		x = $(srcE).parent().children(".players").children(".player")
+		
+# 		numValues = 0
+# 		ranks = []
+# 		names = []
+# 		places = []
+# 		gameTime = new Date().getTime()
+# 		gameDate = String(new Date(gameTime)).split(" GMT")[0]
+# 		for i in [0..x.length-1]
+# 			name = $(x[i]).children("h2").html()
+# 			val = $(x[i]).children("input").val()
+# 			console.log val
+# 			if val
+# 				numValues += 1
+# 				ranks.push({name:name, rank:val})
+# 				names.push(name)
+# 				places.push(val)
+# 		# console.log ranks
+# 		gameResult = 
+# 			timestamp: gameTime
+# 			ranks: ranks
+
+# 		console.log numValues
+# 		if numValues > 1 and numValues < 5
+# 			Session.set "newGameResult", gameResult
+
+# 			Games.insert(
+# 				timeStamp: gameTime
+# 				gameDate: gameDate
+# 				numPlayers: numValues
+# 				names: names
+# 				ranks: places
+# 			)
+# 			makePlot()
+# 		else
+# 			console.log "Between two and four players"
