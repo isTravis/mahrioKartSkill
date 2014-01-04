@@ -1,5 +1,5 @@
 <head>
-  <title>trueskill</title>
+  <title>Mahrio-Kart Skills</title>
 </head>
 
 <body>
@@ -27,7 +27,7 @@
 		<h1>Rank</h1>
 			<div class="toggle-boxes">
 				{{#each players}}
-					<div class="toggleBox">{{name}}</div>
+					<div class="toggleBox {{name}}">{{name}}</div>
 				{{/each}}
 			</div>
 		<div class="demo-container">
@@ -47,10 +47,12 @@
 				<tr>
 					<th class="col1">Name</th>
 					<th class="col2"># Games</th>
-					<th class="col3">Current Mu</th>
-					<th class="col4">Current Sigma</th>
-					<th class="col5">Mu History</th>
-					<th class="col6">Sigma History</th>
+					<th class="col3">Current Level</th>
+					<th class="col4">Current Mu</th>
+					<th class="col5">Current Sigma</th>
+					<th class="col6">Level History</th>
+					<th class="col7">Championships Won</th>
+					<th class="col8">% Champion</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -58,10 +60,12 @@
 				<tr class="player-row">
 					<td>{{name}}</td>
 					<td>{{gamesPlayed}}</td>
+					<td class="two-decimal">{{currentLevel}}</td>
 					<td class="two-decimal">{{currentMu}}</td>
 					<td class="two-decimal">{{currentSigma}}</td>
-					<td class="sparkline">{{muHistory}}</td>
-					<td class="sparkline">{{sigmaHistory}}</td>
+					<td class="sparkline">{{levelHistory}}</td>
+					<td>{{championshipsWon}}</td>
+					<td class="two-decimal">{{percentChampion}}</td>
 				</tr>
 				{{/each}}
 			</tbody>
@@ -85,7 +89,7 @@
 			<tbody>
 				{{#each games}}
 				<tr class="game-row">
-					<td>{{date}}</td>
+					<td>{{gameDate}}</td>
 					<td>{{numPlayers}}</td>
 					<td>{{names}}</td>
 					<td>{{ranks}}</td>

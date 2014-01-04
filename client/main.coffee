@@ -11,38 +11,13 @@ Template.players.created = ->
 Template.players.rendered = ->
 	Session.set "newGameResult", 0
 	# makeScoreTables()
+	plottedPlayers = Session.get "plottedPlayers"
+	for i in [0..plottedPlayers.length-1]
+		$(".toggle-boxes").children("." + (plottedPlayers[i])).addClass("highlighted")
 	makePlot()
 
 # Template.players.scores = ->
 	# return 5
-
-# while counter < 500{
-# 	fakeGame();
-# 	counter +=1;
-# }
-
-# @fakeGame = () ->
-# 	ranks = [{name:"Travis", rank: "2"},{name:"Jasmin", rank: "3"},{name:"Maisam", rank: "4"},{name:"Steve", rank: "1"}]
-# 	numValues = 4
-# 	names = ["Travis","Jasmin","Maisam","Steve"]
-# 	places = [1,2,3,4]
-# 	gameTime = new Date().getTime()
-
-# 	gameResult = 
-# 		timestamp: gameTime
-# 		ranks: ranks
-
-# 	if numValues > 1 and numValues < 5
-# 		Session.set "newGameResult", gameResult
-
-# 		Games.insert(
-# 			date: gameTime
-# 			numPlayers: numValues
-# 			names: names
-# 			ranks: places
-# 		)
-# 		makePlot()
-
 
 Template.players.events = 
 	"click div.submitGame": (d) ->
@@ -55,6 +30,7 @@ Template.players.events =
 		names = []
 		places = []
 		gameTime = new Date().getTime()
+		gameDate = String(new Date(gameTime)).split(" GMT")[0]
 		for i in [0..x.length-1]
 			name = $(x[i]).children("h2").html()
 			val = $(x[i]).children("input").val()
@@ -74,7 +50,8 @@ Template.players.events =
 			Session.set "newGameResult", gameResult
 
 			Games.insert(
-				date: gameTime
+				timeStamp: gameTime
+				gameDate: gameDate
 				numPlayers: numValues
 				names: names
 				ranks: places
@@ -82,6 +59,26 @@ Template.players.events =
 			makePlot()
 		else
 			console.log "Between two and four players"
+
+
+	"click div.toggleBox": (d) ->
+		srcE = if d.srcElement then d.srcElement else d.target
+		plottedPlayers = Session.get "plottedPlayers"
+		if $(srcE).hasClass("highlighted")
+			$(srcE).removeClass("highlighted")
+			index = plottedPlayers.indexOf($(srcE).html())
+			if index > -1
+			    plottedPlayers.splice(index, 1)
+			Session.set "plottedPlayers", plottedPlayers
+			makePlot()
+		else
+			$(srcE).addClass("highlighted")
+			plottedPlayers.push($(srcE).html())
+			Session.set "plottedPlayers", plottedPlayers
+			makePlot()
+		
+
+
 
 Template.scores.scores = ->
 	Players.find().fetch()
@@ -95,6 +92,14 @@ Template.scores.rendered = ->
 Template.games.games = ->
 	Games.find().fetch()
 
+# Template.games.rendered = ->
+# 	x = $(".date-entry")
+# 	for i in [0..x.length-1]
+# 		unixStamp = parseFloat(x[i].innerText)
+# 		date = new Date(unixStamp);
+# 		x[i].innerText = date
+		# $(".x").children("." + (plottedPlayers[i])).addClass("highlighted")
+	# makePlot()
 # Template.games.rendered = ->
 # 	if $(".gameTable").children("tbody").children(".game-row").length
 # 		$(".gameTable").dataTable
@@ -110,11 +115,16 @@ Template.games.games = ->
 	playerName = playername
 	Players.insert(
 		name: playerName
+		currentLevel: 0
 		currentMu: 25
 		currentSigma: 25/3
+		levelHistory: [0]
 		muHistory: [25]
 		sigmaHistory: [25/3]
 		gamesPlayed: 0
+		championshipsPlayed: 0
+		championshipsWon: 0
+		percentChampion: 0
 	)
 
 @makePlot = () ->
@@ -148,7 +158,7 @@ Template.games.games = ->
 			bSort: true
 			bInfo: false		
 			bAutoWidth: false
-		console.log $(".scoreTable").children("tbody").children(".player-row").length
+		# console.log $(".scoreTable").children("tbody").children(".player-row").length
 
 		$('.sparkline').sparkline "html",
 		type: "line"

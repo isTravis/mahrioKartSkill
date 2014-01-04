@@ -2,7 +2,7 @@ Deps.autorun ->
     gamesSub = Meteor.subscribe "gamesPub"
 
     result = Session.get "newGameResult"
-    # result = 0
+    # resu[lt = 0
     playersSub = Meteor.subscribe "playersPub", result
     
   # # sub.stop() # Stop the previous subscription, because it's changed.
