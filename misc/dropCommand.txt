@@ -1,3 +1,0 @@
-db.games.remove({timeStamp: 1388871656042}, true)
-
-Meteor.call("rerunHistory")

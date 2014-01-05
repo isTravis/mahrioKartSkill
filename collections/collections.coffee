@@ -14,13 +14,3 @@
 	remove: () ->
 		return true
 	)
-
-# @MostRecentGifs.allow(
-# 	update: () ->
-# 		return true
-# 	remove: () ->
-# 		return true
-# 	insert: () ->
-# 		return true
-# 	)
-

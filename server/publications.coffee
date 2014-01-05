@@ -7,30 +7,31 @@ Meteor.publish "plotDataPub", (gameNum) ->
 
 
 Meteor.publish "playersPub", (result) ->
+    # If a result has been published: update all the players. 
     if result
         trueskill = Meteor.require "trueskill"
         players = []
-        # console.log result
-        for i in [0..result.ranks.length-1]
-            # For each player in the game, get their rank, append
+
+        # For each player in the game, get their rank, append
+        for i in [0..result.ranks.length-1] # For each player submitted in the gameResult...
             name = result.ranks[i].name
-            thisTemp = Players.findOne({name:name})
+            thisTemp = Players.findOne({name:name}) # Get the currently stored player data, to update it.
             rank = result.ranks[i].rank
             currentMu = thisTemp.currentMu
             currentSigma = thisTemp.currentSigma
 
-            tempPlayer = {}
+            tempPlayer = {} # Create the data that will become the new Player's stats.
             tempPlayer.skill = [currentMu,currentSigma]
             tempPlayer.rank = rank
 
-            players[i] = tempPlayer
+            players[i] = tempPlayer # Add the players past scores and newGame rank in order to run trueskill on it. 
 
         trueskill.AdjustPlayers players  
 
-        # Update the entry
+        # Update the entry with the results provided by AdjustPlayers
         for i in [0..result.ranks.length-1]
             name = result.ranks[i].name
-            x = Players.findOne({name:name})
+            x = Players.findOne({name:name}) # Get the currently stored player data, to update it.
             
             x.currentLevel = parseFloat(players[i].skill[0]) - parseFloat(3*players[i].skill[1])
             x.currentMu = players[i].skill[0]
@@ -49,33 +50,18 @@ Meteor.publish "playersPub", (result) ->
             
             Players.update({name:name}, x)
 
-        # gameNum = Games.find().count() + 1
-        # # console.log "GameNum " + gameNum
-        # plotData = {}
-        # plotData.gameNum = gameNum
-        # sigmas = {}
-        # mus = {}
-        # _.forEach Players.find().fetch(), (player) ->
-        #     sigmas.player = player.
-        #     players.push({name:player.name, mu:player.currentMu, sigma:player.currentSigma})
-        # plotData.players = players
-
-        # PlotData.insert(plotData)
         gameNum = Games.find().count() + 1
-        # console.log "GameNum " + gameNum
-        # plotData.gameNum = gameNum
         sigmas = {}
         mus = {}
         _.forEach Players.find().fetch(), (player) ->
             sigmas[player.name] = player.currentSigma
             mus[player.name] = player.currentMu
-
         PlotData.insert({gameNum:gameNum, sigmas:sigmas, mus:mus})
 
 
     Players.find({}, { sort: { 'name': 1 }})
 
-
+# Hard coded to define a championship as a game amongst the 4 roommates.
 isChampionship = (result) ->
     hasMaisam = false
     hasSteve = false
@@ -94,7 +80,8 @@ isChampionship = (result) ->
 
     return hasMaisam and hasJasmin and hasTravis and hasSteve
 
-    
+# Used to allow a game to be deleted. Delete the game and then call this function to recalculate all the standings
+# Implements the same procedure from the playersPub, but for each game in the history sequentially
 Meteor.methods rerunHistory: () ->
     players = Players.find().fetch()
     for i in [0..players.length-1]
@@ -139,8 +126,8 @@ Meteor.methods rerunHistory: () ->
             tempPlayer.rank = rank
 
             players[j] = tempPlayer
-            # console.log tempPlayer
 
+        # Created as a dummy data so that we can pass it to isChampionship function
         mimicResult = 
             timestamp: 0
             ranks: mimicRanks
@@ -170,21 +157,8 @@ Meteor.methods rerunHistory: () ->
             
             Players.update({name:name}, x)
 
-        # gameNum = i + 1
-        # # console.log "GameNum " + gameNum
-        # plotData = {}
-        # plotData.gameNum = gameNum
-        # players = []
-        # _.forEach Players.find().fetch(), (player) ->
-        #     players.push({name:player.name, mu:player.currentMu, sigma:player.currentSigma})
-        # plotData.players = players
-
-        # PlotData.insert(plotData)
-
-
         gameNum = i + 1
-        # console.log "GameNum " + gameNum
-        # plotData.gameNum = gameNum
+
         sigmas = {}
         mus = {}
         _.forEach Players.find().fetch(), (player) ->
