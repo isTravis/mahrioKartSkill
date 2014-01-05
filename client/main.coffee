@@ -22,7 +22,7 @@ Template.players.rendered = ->
 	numGames = PlotData.find().fetch()[PlotData.find().count()-1].gameNum
 	$(".plotRange").prop('max',numGames)
 	$(".plotVal").html("Game " + numGames)
-	console.log "max is " + $(".plotRange").attr('max')
+	# console.log "max is " + $(".plotRange").attr('max')
 	# console.log "count " + PlotData.find().count()
 
 	# gameNum = Session.get "plotGameNum"
@@ -46,7 +46,7 @@ Template.players.events =
 
 	"change .plotRange": (d)->
 		newVal = $(".plotRange").attr("value")
-		console.log newVal
+		# console.log newVal
 		Session.set "plotGameNum", newVal
 		$(".plotVal").html("Game " + newVal)
 		makePlot()
@@ -159,6 +159,10 @@ Template.games.games = ->
 		championshipsWon: 0
 		percentChampion: 0
 	)
+@removePlayer = (playerName) ->
+	removeID = Players.findOne({name:playerName})._id
+	console.log removeID
+	Players.remove(removeID)
 
 @makePlot = () ->
 
@@ -190,7 +194,7 @@ Template.games.games = ->
 			    show: true
 			    fill: true
 		    xaxis:
-	            min: -10 
+	            min: 0 
 	            max: 50  
 	            tickSize: 5
 	        yaxis:

@@ -11,6 +11,8 @@
 @Players.allow(
 	insert: () ->
 		return true
+	remove: () ->
+		return true
 	)
 
 # @MostRecentGifs.allow(
