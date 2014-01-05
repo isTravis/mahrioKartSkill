@@ -1,6 +1,11 @@
 Meteor.publish "gamesPub", -> 
     Games.find({}, { sort: { 'timeStamp': -1 }})
 
+Meteor.publish "plotDataPub", (gameNum) ->
+    # PlotData.findOne({gameNum:gameNum})
+    PlotData.find({}, { sort: { 'gameNum': 1 }})
+
+
 Meteor.publish "playersPub", (result) ->
     if result
         trueskill = Meteor.require "trueskill"
@@ -44,7 +49,28 @@ Meteor.publish "playersPub", (result) ->
             
             Players.update({name:name}, x)
 
+        # gameNum = Games.find().count() + 1
+        # # console.log "GameNum " + gameNum
+        # plotData = {}
+        # plotData.gameNum = gameNum
+        # sigmas = {}
+        # mus = {}
+        # _.forEach Players.find().fetch(), (player) ->
+        #     sigmas.player = player.
+        #     players.push({name:player.name, mu:player.currentMu, sigma:player.currentSigma})
+        # plotData.players = players
 
+        # PlotData.insert(plotData)
+        gameNum = Games.find().count() + 1
+        # console.log "GameNum " + gameNum
+        # plotData.gameNum = gameNum
+        sigmas = {}
+        mus = {}
+        _.forEach Players.find().fetch(), (player) ->
+            sigmas[player.name] = player.currentSigma
+            mus[player.name] = player.currentMu
+
+        PlotData.insert({gameNum:gameNum, sigmas:sigmas, mus:mus})
 
 
     Players.find({}, { sort: { 'name': 1 }})
@@ -68,7 +94,7 @@ isChampionship = (result) ->
 
     return hasMaisam and hasJasmin and hasTravis and hasSteve
 
-
+    
 Meteor.methods rerunHistory: () ->
     players = Players.find().fetch()
     for i in [0..players.length-1]
@@ -113,7 +139,7 @@ Meteor.methods rerunHistory: () ->
             tempPlayer.rank = rank
 
             players[j] = tempPlayer
-            console.log tempPlayer
+            # console.log tempPlayer
 
         mimicResult = 
             timestamp: 0
@@ -143,4 +169,29 @@ Meteor.methods rerunHistory: () ->
                 x.percentChampion = (x.championshipsWon/x.championshipsPlayed)
             
             Players.update({name:name}, x)
+
+        # gameNum = i + 1
+        # # console.log "GameNum " + gameNum
+        # plotData = {}
+        # plotData.gameNum = gameNum
+        # players = []
+        # _.forEach Players.find().fetch(), (player) ->
+        #     players.push({name:player.name, mu:player.currentMu, sigma:player.currentSigma})
+        # plotData.players = players
+
+        # PlotData.insert(plotData)
+
+
+        gameNum = i + 1
+        # console.log "GameNum " + gameNum
+        # plotData.gameNum = gameNum
+        sigmas = {}
+        mus = {}
+        _.forEach Players.find().fetch(), (player) ->
+            sigmas[player.name] = player.currentSigma
+            mus[player.name] = player.currentMu
+
+        PlotData.insert({gameNum:gameNum, sigmas:sigmas, mus:mus})
+
+
 

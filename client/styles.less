@@ -129,6 +129,7 @@ body{
 }
 
 .rank-section{
+	position: relative;
 	.toggle-boxes{
 		height:25px;
 		.toggleBox{
@@ -140,11 +141,36 @@ body{
 				color:@hover-color;
 			}
 		}
-		.highlighted{
-			color:@hover-color;
-		}
+		
 
 	}
+	.highlighted{
+		color:@hover-color;
+	}
+
+	.fixedAxes{
+		cursor: pointer;
+		position: absolute;
+		right:0px;
+		top:73px;
+		&:hover{
+			color:@hover-color;
+		}
+	}	
+	.plotRange{
+		width:700px;
+		margin-left: 90px;
+	}
+
+	.plotVal{
+		position: absolute;
+		font-size: 1.2em;
+		bottom:-2px;
+		left:10px;
+	}
+	// .noUiSlider{
+	// 	height:50px;
+	// }
 	
 }
 
@@ -249,6 +275,7 @@ body{
 	height: 250px;
 	padding: 20px 15px 15px 15px;
 	margin: 15px auto 30px auto;
+	margin-bottom: 5px;
 	border: 1px solid #ddd;
 	background: #fff;
 	background: linear-gradient(#f6f6f6 0, #fff 50px);

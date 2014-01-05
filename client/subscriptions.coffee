@@ -2,8 +2,10 @@ Deps.autorun ->
     gamesSub = Meteor.subscribe "gamesPub"
 
     result = Session.get "newGameResult"
-    # resu[lt = 0
     playersSub = Meteor.subscribe "playersPub", result
+
+    gameNum = Session.get "plotGameNum"
+    plotDataSub = Meteor.subscribe "plotDataPub", gameNum
     
   # # sub.stop() # Stop the previous subscription, because it's changed.
   # page = Session.get "page"

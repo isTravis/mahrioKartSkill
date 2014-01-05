@@ -8,6 +8,8 @@ Template.players.players = ->
 Template.players.created = ->
 	Session.set "plottedPlayers", ["Travis","Steve","Maisam","Jasmin"]
 
+	
+
 Template.players.rendered = ->
 	Session.set "newGameResult", 0
 	# makeScoreTables()
@@ -16,10 +18,39 @@ Template.players.rendered = ->
 		$(".toggle-boxes").children("." + (plottedPlayers[i])).addClass("highlighted")
 	makePlot()
 
-# Template.players.scores = ->
-	# return 5
+
+	numGames = PlotData.find().fetch()[PlotData.find().count()-1].gameNum
+	$(".plotRange").prop('max',numGames)
+	$(".plotVal").html("Game " + numGames)
+	console.log "max is " + $(".plotRange").attr('max')
+	# console.log "count " + PlotData.find().count()
+
+	# gameNum = Session.get "plotGameNum"
+	# if gameNum
+	# 	$(".plotRange").prop('value',gameNum)
+	# else
+	# 	$(".plotRange").prop('value',numGames)
 
 Template.players.events = 
+
+	"click .fixedAxes": (d) ->
+		srcE = if d.srcElement then d.srcElement else d.target
+		if $(srcE).hasClass("highlighted")
+			$(srcE).removeClass("highlighted")
+			Session.set "fixedAxes", false
+			makePlot()
+		else
+			$(srcE).addClass("highlighted")
+			Session.set "fixedAxes", true
+			makePlot()
+
+	"change .plotRange": (d)->
+		newVal = $(".plotRange").attr("value")
+		console.log newVal
+		Session.set "plotGameNum", newVal
+		$(".plotVal").html("Game " + newVal)
+		makePlot()
+
 	"click div.submitGame": (d) ->
 		srcE = if d.srcElement then d.srcElement else d.target
 		console.log srcE
@@ -56,6 +87,8 @@ Template.players.events =
 				names: names
 				ranks: places
 			)
+			newPlotVal = $(".plotRange").attr('max') + 1
+			Session.set "plotGameNum", 0
 			makePlot()
 		else
 			console.log "Between two and four players"
@@ -128,26 +161,49 @@ Template.games.games = ->
 	)
 
 @makePlot = () ->
+
 	plottedPlayers = Session.get "plottedPlayers"
+	gameNum = Session.get "plotGameNum"
+
+	if gameNum
+		plotData = PlotData.findOne({gameNum:parseInt(gameNum)})
+		plots = []
+		for i in [0..plottedPlayers.length-1]
+			name = plottedPlayers[i]
+			mu = plotData.mus[name]
+			sigma = plotData.sigmas[name]
+			plots.push({label:name, data:createGaussian(mu, sigma, 100)})
+	else
+		plots = []
+		for i in [0..plottedPlayers.length-1]
+			thisPlayer = Players.findOne({name:plottedPlayers[i]})
+			if thisPlayer
+				mu = thisPlayer.currentMu
+				sigma = thisPlayer.currentSigma
+				plots.push({label:thisPlayer.name, data:createGaussian(mu, sigma, 100)})
 	
-	plots = []
-
-	for i in [0..plottedPlayers.length-1]
-		# console.log plottedPlayers[i]
-		# console.log Players.findOne({name:plottedPlayers[i]})
-		thisPlayer = Players.findOne({name:plottedPlayers[i]})
-		if thisPlayer
-			# console.log thisPlayer
-			mu = thisPlayer.currentMu
-			sigma = thisPlayer.currentSigma
-			plots.push({label:thisPlayer.name, data:createGaussian(mu, sigma, 100)})
-
-	$.plot "#placeholder", 
-		plots,
-		lines:
-		    show: true
-		    fill: true
-	    height: '200px'
+	fixedAxes = Session.get "fixedAxes"
+	if fixedAxes
+		$.plot "#placeholder", 
+			plots,
+			lines:
+			    show: true
+			    fill: true
+		    xaxis:
+	            min: -10 
+	            max: 50  
+	            tickSize: 5
+	        yaxis:
+	            min:0 
+	            max: 0.35  
+	            tickSize: 0.1
+	else            
+		$.plot "#placeholder", 
+			plots,
+			lines:
+			    show: true
+			    fill: true
+            
 	    
 @makeScoreTables = () ->
 	if $(".scoreTable").children("tbody").children(".player-row").length
@@ -180,50 +236,3 @@ Template.games.games = ->
 		y = (1 / Math.sqrt(2*Math.PI*Math.pow(sigma,2))) * Math.exp(-1 * Math.pow((x-mu), 2) / (2 * Math.pow(sigma,2)));
 		pointArray.push [x,y]
 	return pointArray
-
-
-
-# @rerunHistory = () ->
-# 	Get all players
-# 	reset all their profiles
-# 	for all games in Games
-# 		'submit'
-
-# 		srcE = if d.srcElement then d.srcElement else d.target
-# 		console.log srcE
-# 		x = $(srcE).parent().children(".players").children(".player")
-		
-# 		numValues = 0
-# 		ranks = []
-# 		names = []
-# 		places = []
-# 		gameTime = new Date().getTime()
-# 		gameDate = String(new Date(gameTime)).split(" GMT")[0]
-# 		for i in [0..x.length-1]
-# 			name = $(x[i]).children("h2").html()
-# 			val = $(x[i]).children("input").val()
-# 			console.log val
-# 			if val
-# 				numValues += 1
-# 				ranks.push({name:name, rank:val})
-# 				names.push(name)
-# 				places.push(val)
-# 		# console.log ranks
-# 		gameResult = 
-# 			timestamp: gameTime
-# 			ranks: ranks
-
-# 		console.log numValues
-# 		if numValues > 1 and numValues < 5
-# 			Session.set "newGameResult", gameResult
-
-# 			Games.insert(
-# 				timeStamp: gameTime
-# 				gameDate: gameDate
-# 				numPlayers: numValues
-# 				names: names
-# 				ranks: places
-# 			)
-# 			makePlot()
-# 		else
-# 			console.log "Between two and four players"
