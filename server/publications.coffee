@@ -84,6 +84,12 @@ isChampionship = (result) ->
 # Implements the same procedure from the playersPub, but for each game in the history sequentially
 Meteor.methods rerunHistory: () ->
     players = Players.find().fetch()
+
+    # Clear all the plotData. Will re-enter at the end of this method.
+    _.forEach PlotData.find().fetch(), (entry) ->
+        console.log entry._id
+        PlotData.remove(entry._id)    
+
     for i in [0..players.length-1]
         name = players[i].name
 
