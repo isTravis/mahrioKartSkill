@@ -50,7 +50,7 @@ Meteor.publish "playersPub", (result) ->
             
             Players.update({name:name}, x)
 
-        gameNum = Games.find().count() + 1
+        gameNum = Games.find().count()
         sigmas = {}
         mus = {}
         _.forEach Players.find().fetch(), (player) ->
@@ -87,7 +87,7 @@ Meteor.methods rerunHistory: () ->
 
     # Clear all the plotData. Will re-enter at the end of this method.
     _.forEach PlotData.find().fetch(), (entry) ->
-        console.log entry._id
+        # console.log entry._id
         PlotData.remove(entry._id)    
 
     for i in [0..players.length-1]
